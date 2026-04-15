@@ -1,8 +1,11 @@
 package com.bookstore.jpa.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -16,6 +19,12 @@ public class PublisherModel implements Serializable {
 
     @Column(nullable = false, unique = true)
     private String name;
+
+    //Write only so don't appear on Json
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    //FetchType Lazy prevent unnecessary DB load
+    @OneToMany(mappedBy = "publisher", fetch = FetchType.LAZY)
+    private Set<BookModel> books = new HashSet<>();
 
     public UUID getId() {
         return id;
@@ -31,5 +40,13 @@ public class PublisherModel implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Set<BookModel> getBooks() {
+        return books;
+    }
+
+    public void setBooks(Set<BookModel> books) {
+        this.books = books;
     }
 }
